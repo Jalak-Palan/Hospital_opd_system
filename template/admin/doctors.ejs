@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctors Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+        }
+        
+        body {
+            background-color: #f8f9fc;
+            font-family: 'Nunito', sans-serif;
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 250px;
+            background: var(--success-color);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-brand {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+        
+        .nav-item {
+            margin: 0.5rem 1rem;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 0.75rem 1rem;
+            border-radius: 0.35rem;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .nav-link i {
+            margin-right: 0.5rem;
+            width: 20px;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 1.5rem;
+        }
+        
+        .topbar {
+            background: white;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+        
+        .content-card {
+            background: white;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            background-color: #f8f9fc;
+            border-bottom: 1px solid #e3e6f0;
+            padding: 1rem 1.25rem;
+            font-weight: bold;
+            color: #5a5c69;
+        }
+        
+        .table th {
+            background-color: #f8f9fc;
+            border-top: none;
+            font-weight: 600;
+            color: #5a5c69;
+        }
+        
+        .doctor-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(180deg, var(--primary-color) 0%, #224abe 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="bi bi-hospital me-2"></i>
+            Admin Panel
+        </div>
+        <div class="sidebar-nav">
+            <div class="nav-item">
+                <a href="/admin/dashboard" class="nav-link">
+                    <i class="bi bi-speedometer2"></i>
+                    Dashboard
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/admin/doctors" class="nav-link active">
+                    <i class="bi bi-person-badge"></i>
+                    Doctors
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/admin/doctors/add" class="nav-link">
+                    <i class="bi bi-person-plus"></i>
+                    Add Doctor
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/admin/patients" class="nav-link">
+                    <i class="bi bi-people"></i>
+                    Patients
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/admin/appointments" class="nav-link">
+                    <i class="bi bi-calendar-check"></i>
+                    Appointments
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/admin/notifications" class="nav-link">
+                    <i class="bi bi-bell"></i>
+                    Notifications
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/admin/settings" class="nav-link">
+                    <i class="bi bi-gear"></i>
+                    Settings
+                </a>
+            </div>
+            <div class="nav-item mt-4">
+                <a href="/admin/logout" class="nav-link text-danger">
+                    <i class="bi bi-box-arrow-right"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </div>
+ <div class="hamburger">
+        <i class="ri-menu-line close"></i>    
+       <i class="ri-close-circle-line open " style="display: none;"></i>
+    </div>
+    <div class="main-content">
+        <div class="topbar">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h3 mb-0 text-gray-800">
+                    <i class="bi bi-person-badge me-2"></i>
+                    Doctors Management
+                </h1>
+                <div class="d-flex align-items-center">
+                    <a href="/admin/doctors/add" class="btn btn-primary me-3">
+                        <i class="bi bi-person-plus me-2"></i>
+                        Add Doctor
+                    </a>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/admin/settings">Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/admin/logout">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+         <div class="hamburger">
+        <i class="ri-menu-line close"></i>    
+       <i class="ri-close-circle-line open " style="display: none;"></i>
+    </div>
+
+        <div class="content-card">
+            <div class="card-header">
+                <i class="bi bi-search me-2"></i>
+                Search & Filters
+            </div>
+            <div class="p-3">
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search doctors...">
+                    </div>
+                    <div class="col-md-3" style="display: none;">
+                        <select class="form-select" id="specialtyFilter">
+                            <option value="">All Specialties</option>
+                            <option value="cardiologist">Cardiology</option>
+                            <option value=neurologist">Neurology</option>
+                            <option value="pediatricien">Pediatrics</option>
+                            <option value="Orthopedics">orthopedic</option>
+                            <option value="Dermatology">Dermatology</option>
+                        </select>
+                    </div>
+                    <div style="display: none;" class="col-md-3">
+                        <select class="form-select" id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-outline-primary w-100" onclick="clearFilters()">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="bi bi-person-badge me-2"></i>
+                    Doctors (<span id="doctorCount"><%= doctors.length %></span>)
+                </div>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="exportToCSV()">
+                        <i class="bi bi-download me-1"></i>Export
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="printTable()">
+                        <i class="bi bi-printer me-1"></i>Print
+                    </button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 w-full" id="doctorsTable">
+                    <thead>
+                        <tr>
+                            <th>Doctor</th>
+                            <th>Specialty</th>
+                            <th>Contact</th>
+                            <th>Experience</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% doctors.forEach(doctor => { %>
+                            <tr data-doctor-id="<%= doctor._id %>">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="doctor-avatar me-3">
+                                            <%= doctor.firstName.charAt(0) %><%= doctor.lastName.charAt(0) %>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold"><%= doctor.title %> <%= doctor.firstName %> <%= doctor.lastName %></div>
+                                            <small class="text-muted"><%= doctor.qualifications.degree %></small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold"><%= doctor.specialty %></div>
+                                    <small class="text-muted"><%= doctor.workInfo.department %></small>
+                                </td>
+                                <td>
+                                    <div class="fw-bold"><%= doctor.contactInfo.email %></div>
+                                    <small class="text-muted"><%= doctor.contactInfo.phoneNumber %></small>
+                                </td>
+                                <td>
+                                    <div class="fw-bold"><%= doctor.workInfo.experience %> years</div>
+                                    <small class="text-muted"><%= doctor.workInfo.hospital %></small>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="/admin/doctors/edit/<%= doctor._id %>" class="btn btn-outline-primary btn-sm" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-outline-info btn-sm" title="View Details" 
+                                                onclick="viewDoctor('<%= doctor._id %>')">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" title="Delete" 
+                                                onclick="deleteDoctor('<%= doctor._id %>')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="doctorModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Doctor Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="doctorModalBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            filterDoctors();
+        });
+
+        document.getElementById('specialtyFilter').addEventListener('change', filterDoctors);
+        document.getElementById('statusFilter').addEventListener('change', filterDoctors);
+
+        function filterDoctors() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const specialtyFilter = document.getElementById('specialtyFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const rows = document.querySelectorAll('#doctorsTable tbody tr');
+            
+            rows.forEach(row => {
+                const doctorName = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                const specialty = row.querySelector('td:nth-child(2)').textContent;
+                const status = row.querySelector('td:nth-child(5)').textContent.trim();
+                
+                const searchMatch = !searchTerm || doctorName.includes(searchTerm);
+                const specialtyMatch = !specialtyFilter || specialty.includes(specialtyFilter);
+                const statusMatch = !statusFilter || status === statusFilter;
+                
+                row.style.display = searchMatch && specialtyMatch && statusMatch ? '' : 'none';
+            });
+            
+            updateCount();
+        }
+
+        function updateCount() {
+            const visibleRows = document.querySelectorAll('#doctorsTable tbody tr:not([style*="display: none"])');
+            document.getElementById('doctorCount').textContent = visibleRows.length;
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('specialtyFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            
+            const rows = document.querySelectorAll('#doctorsTable tbody tr');
+            rows.forEach(row => row.style.display = '');
+            updateCount();
+        }
+
+        function viewDoctor(doctorId) {
+            fetch(`/admin/doctors/${doctorId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const doctor = data.doctor;
+                        document.getElementById('doctorModalBody').innerHTML = `
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Personal Information</h6>
+                                    <p><strong>Name:</strong> ${doctor.title} ${doctor.firstName} ${doctor.lastName}</p>
+                                    <p><strong>Specialty:</strong> ${doctor.specialty}</p>
+                                    <p><strong>Degree:</strong> ${doctor.qualifications.degree}</p>
+                                    <p><strong>Medical School:</strong> ${doctor.qualifications.medicalSchool}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Contact Information</h6>
+                                    <p><strong>Email:</strong> ${doctor.contactInfo.email}</p>
+                                    <p><strong>Phone:</strong> ${doctor.contactInfo.phoneNumber}</p>
+                                    <p><strong>Address:</strong> ${doctor.contactInfo.address}</p>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <h6>Work Information</h6>
+                                    <p><strong>Hospital:</strong> ${doctor.workInfo.hospital}</p>
+                                    <p><strong>Department:</strong> ${doctor.workInfo.department}</p>
+                                    <p><strong>Experience:</strong> ${doctor.workInfo.experience} years</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Availability</h6>
+                                    <p><strong>Days:</strong> ${doctor.availability.days}</p>
+                                    <p><strong>Time:</strong> ${doctor.availability.startTime} - ${doctor.availability.endTime}</p>
+                                </div>
+                            </div>
+                        `;
+                        new bootstrap.Modal(document.getElementById('doctorModal')).show();
+                    } else {
+                        alert('Error loading doctor details');
+                    }
+                });
+        }
+
+        function deleteDoctor(doctorId) {
+            if (confirm('Are you sure you want to delete this doctor? This action cannot be undone.')) {
+                fetch(`/admin/doctors/delete/${doctorId}`, {
+                    method: 'POST'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        const row = document.querySelector(`tr[data-doctor-id="${doctorId}"]`);
+                        if (row) {
+                            row.remove();
+                            updateCount();
+                        }
+                    } else {
+                        alert('Error deleting doctor');
+                    }
+                });
+            }
+        }
+
+        function exportToCSV() {
+            const table = document.getElementById('doctorsTable');
+            const rows = Array.from(table.querySelectorAll('tr'));
+            
+            let csv = [];
+            rows.forEach(row => {
+                const cols = Array.from(row.querySelectorAll('td, th'));
+                const rowData = cols.map(col => {
+                    const text = col.textContent.replace(/\s+/g, ' ').trim();
+                    return `"${text}"`;
+                });
+                csv.push(rowData.join(','));
+            });
+            const csvContent = csv.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'doctors.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function printTable() {
+            window.print();
+        }
+
+            document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.hamburger');
+    const sidebar = document.querySelector('.sidebar');
+    const contentArea = document.querySelector('.content-area');
+    const closedMenu = document.querySelector('.close');
+    const openedMenu = document.querySelector('.open');
+
+    if (hamburger && sidebar) {
+        hamburger.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevents the content area click from firing
+            hamburger.classList.toggle('active');
+            if (sidebar.classList.contains('active')) {
+                // When sidebar is open and we want to close it
+                closedMenu.style.display = 'block';
+                openedMenu.style.display = 'none';
+                sidebar.classList.remove('active');
+            } else {
+                // When sidebar is closed and we want to open it
+                closedMenu.style.display = 'none';
+                openedMenu.style.display = 'block';
+                sidebar.classList.add('active');
+            }
+        });
+    }
+})
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.hamburger');
+    const sidebar = document.querySelector('.sidebar');
+    const contentArea = document.querySelector('.content-area');
+    const closedMenu = document.querySelector('.close');
+    const openedMenu = document.querySelector('.open');
+
+    if (hamburger && sidebar) {
+        hamburger.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevents the content area click from firing
+            hamburger.classList.toggle('active');
+            if (sidebar.classList.contains('active')) {
+                // When sidebar is open and we want to close it
+                closedMenu.style.display = 'block';
+                openedMenu.style.display = 'none';
+                sidebar.classList.remove('active');
+            } else {
+                // When sidebar is closed and we want to open it
+                closedMenu.style.display = 'none';
+                openedMenu.style.display = 'block';
+                sidebar.classList.add('active');
+            }
+        });
+    }
+})
+
+    </script>
+</body>
+</html>
